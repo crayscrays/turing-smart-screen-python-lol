@@ -1,3 +1,14 @@
+# turing-smart-screen-python-lol
+
+> [!NOTE]
+> **This is a fork** of [mathoudebine/turing-smart-screen-python](https://github.com/mathoudebine/turing-smart-screen-python) bundled with **`lol_dash/`** — a League of Legends live dashboard for the Turing Smart Screen 3.5" Revision A.
+>
+> 👉 **For the LoL dashboard, see [`lol_dash/README.md`](./lol_dash/README.md).**
+>
+> Everything below this notice is the original upstream README, unchanged.
+
+---
+
 # ![Icon](https://raw.githubusercontent.com/mathoudebine/turing-smart-screen-python/main/res/icons/monitor-icon-17865/24.png) turing-smart-screen-python
 
 > [!WARNING]

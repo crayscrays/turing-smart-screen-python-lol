@@ -1,0 +1,53 @@
+# lol-turing-dash configuration
+
+# --- Display ---
+display:
+  # Auto-detect by VID:PID. Override if you have multiple serial devices.
+  # Examples: "COM5" (Windows), "/dev/cu.usbserial-1410" (macOS), "/dev/ttyACM0" (Linux)
+  com_port: auto
+  # Revision A 3.5" panel native resolution
+  width: 320
+  height: 480
+  # 0 = portrait (USB on top), 1 = landscape, 2 = portrait reversed, 3 = landscape reversed
+  rotation: 0
+  # 0-255
+  brightness: 200
+  # Some USB35INCHIPS units crash on Reset() — see README.
+  skip_reset: true
+
+# --- League polling ---
+lol:
+  endpoint: "https://127.0.0.1:2999/liveclientdata/allgamedata"
+  # Path to Riot's self-signed cert (downloaded by install script)
+  cert_path: "lol_dash/certs/riotgames.pem"
+  # Poll intervals in seconds
+  poll_idle: 0.25      # how often to check if a game has started
+  poll_ingame: 0.1     # how often to refresh the dashboard while in-game
+  # Number of consecutive failed polls before flipping back to IDLE
+  exit_debounce: 5
+
+# --- Idle mode ---
+idle:
+  # Source MP4 — converted to GIF on first install run
+  mp4_path: "lol_dash/assets/idle.mp4"
+  gif_path: "lol_dash/assets/idle.gif"
+  # Frame interval in seconds (0.125 ≈ 8 fps — realistic upper bound for this panel)
+  frame_interval: 0.125
+
+# --- Data Dragon ---
+ddragon:
+  # "latest" auto-resolves to newest patch on startup; or pin like "14.10.1"
+  version: latest
+  locale: en_US
+  cache_dir: "lol_dash/assets/cache"
+
+# --- Cast detection ---
+cast_detection:
+  # Minimum resource drop (mana/energy) to consider as a possible spell cast
+  min_delta: 5
+  # Tolerance when matching the drop to a known spell cost (fraction)
+  match_tolerance: 0.15
+  # Duration of the highlight ring on the spell icon (seconds)
+  highlight_duration: 0.8
+  # If true, also flash icon on ability level-up (works for resourceless champs)
+  level_up_flash: true

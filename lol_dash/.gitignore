@@ -1,0 +1,6 @@
+assets/cache/
+assets/idle.gif
+assets/preview.jpg
+certs/riotgames.pem
+__pycache__/
+*.pyc

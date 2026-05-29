@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# lol-turing-dash installer (macOS / Linux).
+# Run from the REPO ROOT (the folder containing this README and the `library/` dir):
+#     bash lol_dash/scripts/install.sh
+
+set -euo pipefail
+
+# Resolve repo root = two levels up from this script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+cd "$ROOT"
+
+echo "==> lol-turing-dash installer"
+echo "    Repo root: $ROOT"
+
+# ---------- 1. Python venv ----------
+if [ ! -d ".venv" ]; then
+    echo "==> Creating virtualenv .venv"
+    python3 -m venv .venv
+fi
+# shellcheck disable=SC1091
+source .venv/bin/activate
+
+echo "==> Installing Python dependencies"
+python -m pip install --upgrade pip wheel
+# Upstream library deps
+python -m pip install -r requirements.txt
+# Our additional deps
+python -m pip install -r lol_dash/requirements.txt
+
+# ---------- 2. Riot TLS cert ----------
+echo "==> Fetching Riot Live Client cert"
+mkdir -p lol_dash/certs
+python -m lol_dash.src.utils.cert || echo "   (cert fetch failed — will fall back to insecure TLS)"
+
+# ---------- 3. MP4 → GIF conversion ----------
+if command -v ffmpeg >/dev/null 2>&1; then
+    if [ -f "lol_dash/assets/idle.mp4" ] && [ ! -f "lol_dash/assets/idle.gif" ]; then
+        echo "==> Converting lol_dash/assets/idle.mp4 → lol_dash/assets/idle.gif (8fps, 320x480)"
+        ffmpeg -y -i lol_dash/assets/idle.mp4 \
+            -vf "fps=8,scale=320:480:force_original_aspect_ratio=increase,crop=320:480" \
+            -loop 0 lol_dash/assets/idle.gif
+    else
+        echo "==> Skipping GIF conversion (place your file at lol_dash/assets/idle.mp4 and re-run)"
+    fi
+else
+    echo "!! ffmpeg not found — install it (brew install ffmpeg / apt install ffmpeg) to enable idle video."
+fi
+
+echo ""
+echo "==> Done."
+echo "    Activate venv:   source .venv/bin/activate"
+echo "    Run dashboard:   python -m lol_dash.src.main --config lol_dash/config.yaml"
+echo "    Preview only:    python -m lol_dash.src.main --config lol_dash/config.yaml --no-screen"
