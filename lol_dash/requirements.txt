@@ -6,7 +6,7 @@ Pillow==10.4.0
 
 # Serial / display
 pyserial==3.5
-numpy==1.26.4
+numpy==2.4.6
 
 # Optional: faster JSON
 # orjson==3.10.7
