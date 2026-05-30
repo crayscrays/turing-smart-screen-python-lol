@@ -1,0 +1,86 @@
+name: Build lol-turing-dash binaries
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lol_dash/**'
+      - 'library/**'
+      - '.github/workflows/build-lol-dash.yml'
+  workflow_dispatch:  # manual trigger from the Actions tab
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: lol-turing-dash-windows
+            ext: .exe
+          - os: macos-latest
+            artifact: lol-turing-dash-macos
+            ext: ''
+          - os: ubuntu-latest
+            artifact: lol-turing-dash-linux
+            ext: ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install upstream library deps
+        run: pip install -r requirements.txt
+
+      - name: Install lol_dash deps
+        run: pip install -r lol_dash/requirements.txt
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller==6.10.0
+
+      - name: Build executable
+        run: pyinstaller lol_dash/lol_dash.spec --clean --noconfirm
+
+      - name: Stage release folder
+        shell: bash
+        run: |
+          mkdir -p release/lol_dash/videos
+          mkdir -p release/lol_dash/assets
+          mkdir -p release/lol_dash/certs
+          cp dist/lol-turing-dash${{ matrix.ext }} release/
+          cp lol_dash/config.yaml release/lol_dash/
+          cp lol_dash/videos/README.md release/lol_dash/videos/ 2>/dev/null || true
+          cat > release/README.txt <<'EOF'
+          lol-turing-dash — standalone build
+
+          1) Drop your idle MP4 into  lol_dash/videos/
+          2) Make sure ffmpeg is on PATH (https://ffmpeg.org)
+          3) Plug in your Turing Smart Screen 3.5" Revision A
+          4) Double-click the lol-turing-dash binary
+
+          Edit lol_dash/config.yaml to change COM port, rotation, brightness, etc.
+
+          Full docs: https://github.com/crayscrays/turing-smart-screen-python-lol
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/
+          if-no-files-found: error
+
+      # Attach to release if this run was triggered by a release
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/lol-turing-dash${{ matrix.ext }}

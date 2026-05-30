@@ -33,19 +33,13 @@ echo "==> Fetching Riot Live Client cert"
 mkdir -p lol_dash/certs
 python -m lol_dash.src.utils.cert || echo "   (cert fetch failed — will fall back to insecure TLS)"
 
-# ---------- 3. MP4 → GIF conversion ----------
+# ---------- 3. ffmpeg check (conversion happens at runtime) ----------
 if command -v ffmpeg >/dev/null 2>&1; then
-    if [ -f "lol_dash/assets/idle.mp4" ] && [ ! -f "lol_dash/assets/idle.gif" ]; then
-        echo "==> Converting lol_dash/assets/idle.mp4 → lol_dash/assets/idle.gif (8fps, 320x480)"
-        ffmpeg -y -i lol_dash/assets/idle.mp4 \
-            -vf "fps=8,scale=320:480:force_original_aspect_ratio=increase,crop=320:480" \
-            -loop 0 lol_dash/assets/idle.gif
-    else
-        echo "==> Skipping GIF conversion (place your file at lol_dash/assets/idle.mp4 and re-run)"
-    fi
+    echo "==> ffmpeg found — idle videos will auto-convert at launch"
 else
     echo "!! ffmpeg not found — install it (brew install ffmpeg / apt install ffmpeg) to enable idle video."
 fi
+echo "   Drop your .mp4 into lol_dash/videos/ and launch the app."
 
 echo ""
 echo "==> Done."

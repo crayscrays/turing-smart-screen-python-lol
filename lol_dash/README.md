@@ -11,32 +11,51 @@ The app is purely **passive** — it reads only Riot's official local HTTPS API 
 
 ---
 
-## Quick start
+## Quick start — three ways
+
+### 📦 Option A: Pre-built executable (easiest)
+
+Grab the latest build from the [Releases page](https://github.com/crayscrays/turing-smart-screen-python-lol/releases) or the [Actions tab](https://github.com/crayscrays/turing-smart-screen-python-lol/actions) (artifacts on each successful build):
+
+- `lol-turing-dash-windows.zip` — contains `lol-turing-dash.exe`
+- `lol-turing-dash-macos.zip` — contains `lol-turing-dash` binary
+- `lol-turing-dash-linux.zip` — contains `lol-turing-dash` binary
+
+Then:
+1. Unzip anywhere
+2. Drop a `.mp4` into the `lol_dash/videos/` folder next to the binary
+3. Make sure `ffmpeg` is on your PATH ([download](https://ffmpeg.org/download.html))
+4. Plug in the Turing screen
+5. Double-click `lol-turing-dash` (or `lol-turing-dash.exe`)
+
+### 🖥️ Option B: Double-click launcher (requires Python 3.11+)
 
 ```bash
-# from the REPO ROOT (the folder with `library/`, `lol_dash/`, etc.)
 git clone https://github.com/crayscrays/turing-smart-screen-python-lol.git
 cd turing-smart-screen-python-lol
+```
 
-# Drop your idle video here:
-cp /path/to/your/video.mp4 lol_dash/assets/idle.mp4
+Then:
+- **macOS / Linux:** double-click `lol_dash/run.sh` (or run it from a terminal)
+- **Windows:** double-click `lol_dash\run.bat`
 
-# Linux / macOS:
+First launch installs dependencies into a local `.venv` (~1 minute). Subsequent launches are instant.
+
+### 🔧 Option C: Manual / dev workflow
+
+```bash
+# Linux / macOS
 bash lol_dash/scripts/install.sh
 source .venv/bin/activate
 python -m lol_dash.src.main
 
-# Windows:
+# Windows
 powershell -ExecutionPolicy Bypass -File lol_dash\scripts\install.ps1
 .\.venv\Scripts\Activate.ps1
 python -m lol_dash.src.main
 ```
 
-The installer:
-1. Creates `.venv`
-2. Installs upstream library deps (`requirements.txt`) + our deps (`lol_dash/requirements.txt`)
-3. Downloads Riot's public cert to `lol_dash/certs/riotgames.pem`
-4. Converts `lol_dash/assets/idle.mp4` → `lol_dash/assets/idle.gif` (8fps, 320×480 portrait) via `ffmpeg`
+The installer creates `.venv`, installs deps, and downloads Riot's public cert. MP4→GIF conversion happens automatically when you launch the app.
 
 ---
 
@@ -51,10 +70,13 @@ turing-smart-screen-python-lol/
 │   ├── requirements.txt                  ← extra deps on top of upstream
 │   ├── README.md                         ← this file
 │   ├── certs/                            ← Riot TLS cert (auto-downloaded)
+│   ├── videos/                           ← DROP YOUR .MP4 HERE
 │   ├── assets/
-│   │   ├── idle.mp4                      ← drop your video here
-│   │   ├── idle.gif                      ← auto-generated
+│   │   ├── idle.gif                      ← auto-generated from videos/*.mp4
 │   │   └── cache/                        ← Data Dragon icons
+│   ├── run.sh / run.bat                  ← double-click launchers
+│   ├── entrypoint.py                     ← PyInstaller entrypoint
+│   ├── lol_dash.spec                     ← PyInstaller build spec
 │   ├── scripts/
 │   │   ├── install.sh / install.ps1
 │   │   └── mock_lol_server.py            ← offline-dev fake API

@@ -28,10 +28,13 @@ lol:
 
 # --- Idle mode ---
 idle:
-  # Source MP4 — converted to GIF on first install run
-  mp4_path: "lol_dash/assets/idle.mp4"
+  # Drop a single .mp4 into this folder — the app picks the first one alphabetically
+  # and re-converts it to GIF on launch if it's newer than the cached GIF.
+  videos_dir: "lol_dash/videos"
   gif_path: "lol_dash/assets/idle.gif"
-  # Frame interval in seconds (0.125 ≈ 8 fps — realistic upper bound for this panel)
+  # 8 fps is realistic for the UART-serial Revision A panel
+  fps: 8
+  # Frame interval in seconds (must match fps: 1/fps)
   frame_interval: 0.125
 
 # --- Data Dragon ---

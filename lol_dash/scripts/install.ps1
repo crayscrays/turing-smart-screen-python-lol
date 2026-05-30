@@ -28,20 +28,14 @@ Write-Host "==> Fetching Riot Live Client cert"
 New-Item -ItemType Directory -Force -Path lol_dash\certs | Out-Null
 try { python -m lol_dash.src.utils.cert } catch { Write-Host "   (cert fetch failed)" }
 
-# ---------- 3. MP4 -> GIF ----------
+# ---------- 3. ffmpeg check (conversion happens at runtime) ----------
 $ffmpeg = Get-Command ffmpeg -ErrorAction SilentlyContinue
 if ($ffmpeg) {
-    if ((Test-Path "lol_dash\assets\idle.mp4") -and -not (Test-Path "lol_dash\assets\idle.gif")) {
-        Write-Host "==> Converting lol_dash\assets\idle.mp4 -> lol_dash\assets\idle.gif"
-        & ffmpeg -y -i "lol_dash\assets\idle.mp4" `
-            -vf "fps=8,scale=320:480:force_original_aspect_ratio=increase,crop=320:480" `
-            -loop 0 "lol_dash\assets\idle.gif"
-    } else {
-        Write-Host "==> Skipping GIF conversion (place file at lol_dash\assets\idle.mp4 and re-run)"
-    }
+    Write-Host "==> ffmpeg found - idle videos will auto-convert at launch"
 } else {
     Write-Host "!! ffmpeg not found - install via 'winget install Gyan.FFmpeg' to enable idle video."
 }
+Write-Host "   Drop your .mp4 into lol_dash\videos\ and launch the app."
 
 Write-Host ""
 Write-Host "==> Done."
