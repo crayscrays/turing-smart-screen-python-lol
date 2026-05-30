@@ -117,8 +117,8 @@ def main():
 
     driver = build_driver(cfg["display"], args.no_screen)
 
-    # --- Resolve idle video → GIF (re-converts if MP4 changed) ---
-    ensure_idle_gif(
+    # --- Resolve idle video → GIF (uses .gif directly, or converts video) ---
+    resolved_gif = ensure_idle_gif(
         videos_dir=cfg["idle"].get("videos_dir", "lol_dash/videos"),
         gif_path=cfg["idle"].get("gif_path", "lol_dash/assets/idle.gif"),
         width=cfg["display"]["width"],
@@ -127,7 +127,7 @@ def main():
     )
 
     idle = IdlePlayer(
-        gif_path=cfg["idle"].get("gif_path", "lol_dash/assets/idle.gif"),
+        gif_path=resolved_gif or cfg["idle"].get("gif_path", "lol_dash/assets/idle.gif"),
         frame_interval=cfg["idle"].get("frame_interval", 0.125),
     )
 
