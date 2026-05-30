@@ -62,9 +62,14 @@ class TuringDriver:
         width: int = 320,
         height: int = 480,
         rotation: int = 0,
-        brightness: int = 200,
+        brightness: int = 80,
         skip_reset: bool = True,
     ):
+        # Revision A library accepts 0-100. Clamp any out-of-range value
+        # (older configs may use 0-255 — we coerce gracefully).
+        if brightness > 100:
+            # Treat as 0-255 input and rescale
+            brightness = max(0, min(100, int(brightness * 100 / 255)))
         self.width = width
         self.height = height
         self.rotation = rotation

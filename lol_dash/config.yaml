@@ -10,8 +10,8 @@ display:
   height: 480
   # 0 = portrait (USB on top), 1 = landscape, 2 = portrait reversed, 3 = landscape reversed
   rotation: 0
-  # 0-255
-  brightness: 200
+  # 0-100 (Revision A library clamp). 80 is a good bright default.
+  brightness: 80
   # Some USB35INCHIPS units crash on Reset() — see README.
   skip_reset: true
 

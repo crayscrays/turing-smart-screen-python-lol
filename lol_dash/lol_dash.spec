@@ -41,6 +41,7 @@ hidden_imports = [
     "serial.tools.list_ports",
     "PIL._tkinter_finder",
     "yaml",
+    "certifi",
 ]
 
 a = Analysis(
